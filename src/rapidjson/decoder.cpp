@@ -104,14 +104,17 @@ namespace serialize {
 
     bool convertHandler::EndObject(unsigned memberCount) {
         if (!_stackMgr.empty()) {
+            bool bIsMap = _mgr->isMap();
             _mgr = _stackMgr.back();
             _stackMgr.erase(_stackMgr.begin() + _stackMgr.size() - 1);
 
             _converter = _stackFunction.back();
             _stackFunction.erase(_stackFunction.begin() + _stackFunction.size() - 1);
 
-            _struct = _stackStruct.back();
-            _stackStruct.erase(_stackStruct.begin() + _stackStruct.size() - 1);
+            if (!bIsMap || memberCount) {
+                _struct = _stackStruct.back();
+                _stackStruct.erase(_stackStruct.begin() + _stackStruct.size() - 1);
+            }
         }
         return true;
     }
