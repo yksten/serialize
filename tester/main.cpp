@@ -1,17 +1,10 @@
 #include <iostream>
 #include <assert.h>
 
-#include "cjson/encoder.h"
-#include "cjson/decoder.h"
-
-#include "protobuf/encoder.h"
-#include "protobuf/decoder.h"
 #include "testStruct.h"
 
 #include "json/encoder.h"
 #include "json/decoder.h"
-#include "rapidjson/encoder.h"
-#include "rapidjson/decoder.h"
 
 struct testStru {
     testStru() :i(0), db(0.0) {}
@@ -90,42 +83,6 @@ struct struItem {
 //}
 
 
-void testMap() {
-    std::map<std::string, int> map, map2;
-    map["EVENT_NONE"] = 0;
-    map["EVENT_INIT"] = 1;
-    map["EVENT_VALUE_OF_NUMBER"] = 2;
-    map["EVENT_TIMER_EXPIRED"] = 3;
-    map["EVENT_COUNTER_EXPIRED"] = 4;
-    map["CONDITION_NONE"] = 0;
-    map["CONDITION_NUMBER_COMPARISON"] = 1;
-    map["ACTION_NONE"] = 0;
-    map["ACTION_DO_NOTHING"] = 1;
-    map["ACTION_IF_ELSE"] = 2;
-    map["ACTION_IF_ELIF_ELSE"] = 3;
-    map["ACTION_ACTION_GROUP"] = 4;
-    map["ACTION_SET_NUMBER"] = 5;
-    map["ACTION_SET_STRING"] = 6;
-    map["ACTION_ADD_NUMBER"] = 7;
-    map["ACTION_ADD_STRING"] = 8;
-    map["VARIABLE_NONE"] = 0;
-    map["VARIABLE_NUMBER"] = 1;
-    map["VARIABLE_STRING"] = 2;
-    map["VARIABLE_ENTITY"] = 3;
-    map["VARIABLE_TIMER"] = 4;
-    map["VARIABLE_COUNTER"] = 5;
-
-    serialize::CJSONEncoder jrmap;
-    jrmap << map;
-    std::string str2;
-    jrmap.toString(str2);
-
-    serialize::CJSONDecoder jwmap(str2.c_str());
-    jwmap >> map2;
-
-    assert(map == map2);
-}
-
 void testStructFunc() {
     struItem item;
     item.id = 1;
@@ -148,14 +105,12 @@ void testStructFunc() {
     //std::string str;
     //jr.toString(str);
 
-    serialize::rapidjsonEncoder encoder;
-    encoder << item;
     std::string str;
     serialize::JSONEncoder encoder2(str);
     encoder2 << item;
     //encoder.toString(str);
 
-    serialize::CJSONDecoder jw(str.c_str());
+    serialize::JSONDecoder jw(str.c_str());
     struItem item2;
     jw >> item2;
     bool b = (item == item2);
@@ -170,57 +125,6 @@ struct myStruct {
     }
 };
 
-void testVector() {
-    myStruct s1, s2;
-    std::vector<int> v; v.push_back(1); v.push_back(2); v.push_back(3);
-    s1.vec.push_back(v);
-
-    serialize::CJSONEncoder jr;
-    jr << s1;
-
-    std::string str;
-    jr.toString(str);
-
-    serialize::CJSONDecoder jw(str.c_str());
-    jw >> s2;
-    bool b = (s1.vec == s2.vec);
-    assert(b);
-}
-
-void testProtobuf() {
-    testStruct::struExample item, item2;
-    item.id = testStruct::ET2;
-    item.str = "example";
-    item.f = 9.7f;
-    item.db = 19.8f;
-    item.v.push_back(1);
-    item.v.push_back(2);
-    item.v.push_back(3);
-    testStruct::struExamples items, items2;
-    items.v.push_back(item);
-    items.m[1] = item;
-    item.id = testStruct::ET3;
-    item.str = "afexample";
-    item.f = 5.7f;
-    item.db = 89.8f;
-    items.v.push_back(item);
-    items.m[2] = item;
-
-    std::string buffer;
-    serialize::PBEncoder encoder(buffer);
-    bool b = encoder << items;
-    assert(b);
-
-    serialize::CJSONEncoder jr;
-    jr << items;
-    std::string strJson;
-    jr.toString(strJson);
-    serialize::CJSONDecoder(strJson.c_str()) >> items;
-
-    serialize::PBDecoder decoder(buffer);
-    b = decoder >> items2;
-    assert(b);
-}
 
 enum EnumType {
     ET1,
@@ -274,13 +178,6 @@ struct vecObject {
 };
 
 int main(int argc, char* argv[]) {
-    struInfo info;
-    info.no = 11;
-    //std::string strJson2("{\"m\":{\"1\":9, \"2\":29}}");
-    std::string strJson2("{\"v\":[true, false],\"vts\":[{\"i\":1, \"db\":3.14},{\"i\":2, \"db\":5.14}],\"no\":99, \"ts\":{\"i\":1, \"db\":3.14},\"m\":{\"1\":9, \"2\":29}}");
-    serialize::rapidjsonDecoder decoder2(strJson2.c_str());
-    decoder2 >> info;
-    return 0;
     //vecObject v;
     //arrayXy a;
     //a.arr.push_back(intXy(1, 1));
@@ -312,20 +209,13 @@ int main(int argc, char* argv[]) {
     //mpd >> item2;
 
     struItem ins;
-	std::string strJson("{\"id\":-11,\"str\":\"struct2json\",\"info\":{\"no\":99,\"v\":[false,true],\"m\":{}},\"v\":[false,false],\"v2\":[],\"m\":{},\"m2\":{}}");
+	std::string strJson("{\"id\":-11,\"str\":\"struct2json\",\"info\":{\"no\":99,\"v\":[false,true],\"m\":{}},\"v\":[\"false\",false],\"v2\":[],\"m\":{},\"m2\":{}}");
     serialize::JSONDecoder decoder(strJson);
     bool bDecode = decoder >> ins;
 
     std::string str;
     serialize::JSONEncoder encoder(str);
     bool bEncode = encoder << ins;
-
-    return 0;
-
-    //testMap();
-    //testStructFunc();
-    //testVector();
-    testProtobuf();
 
     return 0;
 }
