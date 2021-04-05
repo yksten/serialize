@@ -44,7 +44,7 @@ namespace serialize {
 
         template<typename T>
         JSONEncoder& operator&(serializeItem<T> value) {
-            encodeValue(value.name, *static_cast<typename internal::TypeTraits<T>::Type*>&value.value, value.bHas);
+            encodeValue(value.name, *static_cast<typename internal::TypeTraits<T>::Type*>(&value.value), value.bHas);
             return *this;
         }
 
@@ -74,7 +74,7 @@ namespace serialize {
             for (typename std::map<K, V>::const_iterator it = value.begin(); it != value.end(); ++it) {
                 typename internal::TypeTraits<K>::Type* pKey = const_cast<typename internal::TypeTraits<K>::Type*>(&(it->first));
                 typename internal::TypeTraits<V>::Type* pValue = const_cast<typename internal::TypeTraits<V>::Type*>(&(it->second));
-                convert(internal::STOT::type<typename internal::TypeTraits<T>::Type>::tostr(*pKey), *pValue);
+                convert(internal::STOT::type<typename internal::TypeTraits<K>::Type>::tostr(*pKey), *pValue);
             }
             return *this;
         }

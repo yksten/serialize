@@ -8,7 +8,7 @@ namespace serialize {
     }
 
     size_t Handler::offsetByValue(const void* cValue) const {
-        return (const uint8_t*)cValue - _pStruct;
+        return (const uint8_t*)cValue - (uint8_t*)_pStruct;
     }
 
     bool Handler::Key(const char* sz, unsigned length) {

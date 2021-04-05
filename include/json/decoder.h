@@ -122,23 +122,23 @@ namespace serialize {
 
         template<typename T>
         JSONDecoder& convert(const char* sz, T& value, bool* pHas = NULL) {
-            size_t offset = ((uint8_t*)(&value)) - _mgr->pStruct;
-            size_t has = pHas ? ((uint8_t*)(pHas)) - _mgr->pStruct : 0;
-            _mgr->set.push_back(function_value(sz, converter::bind<internal::TypeTraits<T>::Type>(&JSONDecoder::decodeValue, offset, has)));
+            size_t offset = ((uint8_t*)(&value)) - (uint8_t*)_mgr->pStruct;
+            size_t has = pHas ? ((uint8_t*)(pHas)) - (uint8_t*)_mgr->pStruct : 0;
+            _mgr->set.push_back(function_value(sz, converter::bind<typename internal::TypeTraits<T>::Type>(&JSONDecoder::decodeValue, offset, has)));
             return *this;
         }
 
         template<typename T>
         JSONDecoder& convert(const char* sz, std::vector<T>& value, bool* pHas = NULL) {
-            size_t offset = ((uint8_t*)(&value)) - _mgr->pStruct;
-            size_t has = pHas ? ((uint8_t*)(pHas)) - _mgr->pStruct : 0;
-            _mgr->set.push_back(function_value(sz, converter::bindArray<internal::TypeTraits<T>::Type>(&JSONDecoder::decodeArray, offset, has)));
+            size_t offset = ((uint8_t*)(&value)) - (uint8_t*)_mgr->pStruct;
+            size_t has = pHas ? ((uint8_t*)(pHas)) - (uint8_t*)_mgr->pStruct : 0;
+            _mgr->set.push_back(function_value(sz, converter::bindArray<typename internal::TypeTraits<T>::Type>(&JSONDecoder::decodeArray, offset, has)));
             return *this;
         }
         template<typename K, typename V>
         JSONDecoder& convert(const char* sz, std::map<K, V>& value, bool* pHas = NULL) {
-            size_t offset = ((uint8_t*)(&value)) - _mgr->pStruct;
-            size_t has = pHas ? ((uint8_t*)(pHas)) - _mgr->pStruct : 0;
+            size_t offset = ((uint8_t*)(&value)) - (uint8_t*)_mgr->pStruct;
+            size_t has = pHas ? ((uint8_t*)(pHas)) - (uint8_t*)_mgr->pStruct : 0;
             _mgr->set.push_back(function_value(sz, converter::bind<std::map<K, V> >(&JSONDecoder::decodeMap, offset, has)));
             return *this;
         }
