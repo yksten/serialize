@@ -1,7 +1,8 @@
 #ifndef __TEST_TEST1__H_
 #define __TEST_TEST1__H_
 
-#include<stdint.h>
+#include "serialize.h"
+#include <stdint.h>
 #include <string>
 #include <vector>
 #include <map>
