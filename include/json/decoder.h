@@ -36,7 +36,8 @@ namespace serialize {
     public:
         StringStream(Ch* src, uint32_t length) : _src(src), _length(length) {}
         // Read
-        Ch Peek() { if (isEnd()) return '\0';  return *_src; }
+        Ch Peek() const { if (isEnd()) return '\0';  return *_src; }
+        Ch Second2Last() const { return *(_src-1); }
         Ch Take() { --_length; return *_src++; }
         Ch* Strart() const { return _src; }
         bool isEnd() const { return (_length == 0); }

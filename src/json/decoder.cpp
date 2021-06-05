@@ -148,7 +148,7 @@ namespace serialize {
         const char* szStart = is.Strart();
 
         for (; is.Peek() != '\0'; is.Take()) {
-            if (is.Peek() == '\"') {
+            if (is.Peek() == '\"' && is.Second2Last() != '\\') {
                 handler.Value(szStart, is.Strart() - szStart);
                 is.Take();  // Skip '\"'
                 return;
